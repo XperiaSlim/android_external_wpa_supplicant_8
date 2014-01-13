@@ -14,9 +14,9 @@
 #include <sys/stat.h>
 #include <stddef.h>
 
-#ifdef USES_TI_MAC80211
+#if defined(USES_TI_MAC80211) || defined(BOARD_TI_SOFTAP)
 #include <cutils/sockets.h>
-#endif /* USES_TI_MAC80211 */
+#endif /* USES_TI_MAC80211 or BOARD_TI_SOFTAP*/
 
 #include "utils/common.h"
 #include "utils/eloop.h"
@@ -997,13 +997,13 @@ int hostapd_ctrl_iface_init(struct hostapd_data *hapd)
 	if (hapd->conf->ctrl_interface == NULL)
 		return 0;
 
-#ifdef USES_TI_MAC80211
+#if defined(USES_TI_MAC80211) || defined(BOARD_TI_SOFTAP)
         os_snprintf(addr.sun_path, sizeof(addr.sun_path), "wpa_%s",
                     hapd->conf->ctrl_interface);
         s = android_get_control_socket(addr.sun_path);
         if (s >= 0)
                 goto havesock;
-#endif /* USES_TI_MAC80211 */
+#endif /* USES_TI_MAC80211 or BOARD_TI_SOFTAP*/
 
 	if (mkdir(hapd->conf->ctrl_interface, S_IRWXU | S_IRWXG) < 0) {
 		if (errno == EEXIST) {
@@ -1085,9 +1085,9 @@ int hostapd_ctrl_iface_init(struct hostapd_data *hapd)
 	}
 	os_free(fname);
 
-#ifdef USES_TI_MAC80211
+#if defined(USES_TI_MAC80211) || defined(BOARD_TI_SOFTAP)
 havesock:
-#endif /* USES_TI_MAC80211 */
+#endif /* USES_TI_MAC80211 or BOARD_TI_SOFTAP*/
 
 	hapd->ctrl_sock = s;
 	eloop_register_read_sock(s, hostapd_ctrl_iface_receive, hapd,

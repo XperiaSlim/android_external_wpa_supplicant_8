@@ -37,10 +37,21 @@ ifeq ($(BOARD_LEGACY_NL80211_STA_EVENTS),true)
 L_CFLAGS += -DLEGACY_STA_EVENTS
 endif
 
-ifdef USES_TI_MAC80211
-# Use Android specific directory for control interface sockets
+        
+ifneq ($(USES_TI_MAC80211)$(BOARD_TI_SOFTAP),)
+# Enable Android specific directory for control interface sockets
+L_CFLAGS += -DANDROID
+ 
+# Set Android specific directory for control interface sockets
 L_CFLAGS += -DCONFIG_CTRL_IFACE_CLIENT_DIR=\"/data/misc/wifi/sockets\"
 L_CFLAGS += -DCONFIG_CTRL_IFACE_DIR=\"/data/system/wpa_supplicant\"
+
+# Use Android specific directory for control interface sockets
+ifeq ($(USES_TI_MAC80211), true)
+L_CFLAGS += -DUSES_TI_MAC80211
+else
+L_CFLAGS += -DBOARD_TI_SOFTAP
+endif
 endif
 
 # To force sizeof(enum) = 4
